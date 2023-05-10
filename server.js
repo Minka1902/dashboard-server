@@ -27,7 +27,7 @@ app.use(bodyParser.json()); // parse application/json
 
 app.use(requestLogger);     // enabling the request logger
 
-app.use(require('./routes/users'))
+app.use(require('./routes/users'));
 
 app.get('/', (req, res) => {
 

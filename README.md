@@ -1,0 +1,1 @@
+This dashboard app is used by Geomage empyees for checking if and when was every source was active 

@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const cors = require("cors");
@@ -28,6 +27,7 @@ app.use(bodyParser.json()); // parse application/json
 app.use(requestLogger);     // enabling the request logger
 
 app.use(require('./routes/users'));
+app.use(require('./routes/sources'));
 
 app.get('/', (req, res) => {
 

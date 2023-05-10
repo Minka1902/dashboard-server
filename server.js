@@ -10,8 +10,6 @@ const { errors } = require('celebrate');
 
 // get Port, file path, folderName and mongoURI
 const { PORT = 4000,
-    // filePath = '../osm-proj/build/index.html',
-    // folderName = 'osm-proj',
     mongoURI = "mongodb+srv://minka-epsg:kCCcG4k4LaD6DbEy@cluster0.khsprzk.mongodb.net/?retryWrites=true&w=majority" } = {};
 
 // include these before other routes

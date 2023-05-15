@@ -28,6 +28,7 @@ app.use(requestLogger);     // enabling the request logger
 
 app.use(require('./routes/users'));
 app.use(require('./routes/sources'));
+app.use(require('./routes/companies'));
 
 app.get('/', (req, res) => {
 

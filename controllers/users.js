@@ -5,11 +5,9 @@ const NotFoundError = require('../errors/NotFoundError');
 const { JWT_SECRET = 'dev-secret' } = process.env;
 
 // ////////////////////////////////////////////////////////////////
-// creates a user with the passed
-// email, password, and username.
-// POST /signup
-// ! request structure
-// ? req.body = {email, password, username}
+//      creates a user
+// TODO POST /signup
+// ?    req.body = {email, password, username}
 module.exports.createUser = (req, res) => {
   const { email, password, username } = req.body;
 
@@ -40,14 +38,10 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-// ////////////////////////////////////////////////////////////////
-// checks the email and password
-// and returns a JWT
-// POST /signin
-// ! request structure
-// ? req.body = {email, password}
+//      checks the email and password and returns a JWT
+// TODO POST /signin
+// ?    req.body = {email, password}
 module.exports.login = (req, res, next) => {
-  console.log('Login Function');
   const { email, password } = req.body;
 
   User.findOne({ email }).select('password')
@@ -68,25 +62,22 @@ module.exports.login = (req, res, next) => {
             }
             const token = jwt.sign(data, JWT_SECRET);
             // successful authentication
-            return res.send({user: user, jwt: token});
+            return res.send({ user: user, jwt: token });
           })
       }
     })
     .catch(next);
 };
 
-// ////////////////////////////////////////////////////////////////
-// returns information about the logged-in user (email and name)
-// GET /users/me
-// ! request structure
-// ? req.userId = USER ID
+//      returns information about the logged-in user (email and name)
+// TODO GET /users/me
+// ?    req.userId = USER ID
 module.exports.getCurrentUser = (req, res) => {
-  console.log('Get current user Function');
   const { userId } = req;
 
   User.findById(userId)
     .then((user) => {
-      return res.send({ id: user._id, email: user.email, username: user.username, savedArticles: [] });
+      return res.send({ id: user._id, email: user.email, username: user.username });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

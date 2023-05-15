@@ -24,12 +24,15 @@ const sourceSchema = new mongoose.Schema({
     },
     memoryLeft: {
         type: Number,
-        require: false,
     },
     totalMemory: {
         type: Number,
-        required: false,
     },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    }
 });
 
 module.exports = mongoose.model('sources', sourceSchema);

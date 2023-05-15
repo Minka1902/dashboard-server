@@ -1,7 +1,6 @@
 const Source = require('../models/source');
 const handleError = require('../errors/ErrorHandler');
 const NotFoundError = require('../errors/NotFoundError');
-const source = require('../models/source');
 
 //      Creates the source
 // TODO POST /add-source
@@ -12,7 +11,7 @@ module.exports.createSource = (req, res) => {
     Source.create({ name, lastActive, lastChecked, status, isActive, memoryLeft, totalMemory })
         .then((data) => {
             if (data) {
-                return res.send({ message: `Source ${name} created succesfully!` })
+                return res.send({ message: `Source '${name}' created succesfully!` })
             } else {
                 return res.send({ message: `Something went wrong, Please try again.` })
             }
@@ -28,10 +27,10 @@ module.exports.createSource = (req, res) => {
 module.exports.getSource = (req, res, next) => {
     const { name } = req.params;
 
-    User.findOne({ name })
+    Source.findOne({ name })
         .then((source) => {
             if (!source) {
-                throw new NotFoundError(`No source with this name - ${name}, was found.`);
+                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
             } else {
                 return res.send(source);
             }
@@ -48,7 +47,7 @@ module.exports.deleteSource = (req, res) => {
     Source.findOneAndDelete({ name })
         .then((source) => {
             if (!source) {
-                throw new NotFoundError(`No source with this name - ${name}, was found.`);
+                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
             } else {
                 return res.send(source);
             }
@@ -84,14 +83,15 @@ module.exports.getAllSources = (req, res) => {
 module.exports.updateSource = (req, res) => {
     const { name } = req.params;
     const { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory } = req.body;
+    const updatedAt = new Date();
 
     const filter = { name };
-    const update = { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory };
+    const update = { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory, updatedAt };
 
     Source.findOneAndUpdate(filter, update)
         .then((data) => {
             if (!data) {
-                throw new NotFoundError(`No source with this name - ${name}, was found nor updated.`);
+                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
             } else {
                 return res.send(data);
             }

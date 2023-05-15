@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Company = require('./company');
 const isEmail = require('validator/lib/isEmail');
 
 const userSchema = new mongoose.Schema({
@@ -19,13 +20,9 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: false,
     minLength: 2,
     maxLength: 30,
   },
-  savedArticles: [{
-    required: false,
-  }],
 });
 
 module.exports = mongoose.model('users', userSchema);

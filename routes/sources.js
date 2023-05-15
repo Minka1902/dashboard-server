@@ -4,13 +4,13 @@ const { getAllSources, getSource, createSource, deleteSource, updateSource } = r
 
 router.get('/get/all', getAllSources);
 
-app.get('/get/:name', celebrate({
+router.get('/get/:name', celebrate({
     params: Joi.object().keys({
         name: Joi.string().required().min(2).max(30),
     }),
 }), getSource);
 
-app.post('/add-source', celebrate({
+router.post('/add-source', celebrate({
     body: Joi.object().keys({
         name: Joi.string().required().min(2).max(30),
         lastActive: Joi.date().required(),
@@ -30,10 +30,10 @@ router.delete('/remove-source/:name', celebrate({
 
 router.put('/update/:name', celebrate({
     body: Joi.object().keys({
-        lastActive: Joi.date().required(),
-        isActive: Joi.boolean().required(),
-        status: Joi.number().required(),
-        lastChecked: Joi.date().required(),
+        lastActive: Joi.date(),
+        isActive: Joi.boolean(),
+        status: Joi.number(),
+        lastChecked: Joi.date(),
         memoryLeft: Joi.number(),
         totalMemory: Joi.number(),
     }),

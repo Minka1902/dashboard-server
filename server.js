@@ -8,7 +8,7 @@ const { requestLogger, errorLogger } = require('./middleware/logger');
 
 // get Port, file path, folderName and mongoURI
 const { PORT = 4000,
-    mongoURI = "mongodb://localhost:27017/dashboarDB" } = process.env;
+    mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority" } = process.env;
 const app = express();
 
 mongoose.connect(mongoURI)

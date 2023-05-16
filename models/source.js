@@ -6,6 +6,11 @@ const sourceSchema = new mongoose.Schema({
         unique: true,
         required: true,
     },
+    url: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     lastActive: {
         type: Date,
         required: true,

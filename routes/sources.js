@@ -13,6 +13,7 @@ router.get('/get/:name', celebrate({
 router.post('/add-source', celebrate({
     body: Joi.object().keys({
         name: Joi.string().required().min(2).max(30),
+        url: Joi.string().uri().required(),
         lastActive: Joi.date().required(),
         isActive: Joi.boolean().required(),
         status: Joi.number().required(),
@@ -32,6 +33,7 @@ router.put('/update/:name', celebrate({
     body: Joi.object().keys({
         lastActive: Joi.date(),
         isActive: Joi.boolean(),
+        url: Joi.string().uri(),
         status: Joi.number(),
         lastChecked: Joi.date(),
         memoryLeft: Joi.number(),

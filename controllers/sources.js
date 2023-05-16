@@ -6,10 +6,10 @@ const NotFoundError = require('../errors/NotFoundError');
 // TODO POST /add-source
 // ?    req.body = { name, lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
 module.exports.createSource = (req, res) => {
-    const { name, lastActive, isActive, status, lastChecked, memoryLeft, totalMemory } = req.body;
+    const { name, lastActive, isActive, url, status, lastChecked, memoryLeft, totalMemory } = req.body;
     const updatedAt = new Date();
 
-    Source.create({ name, lastActive, lastChecked, status, isActive, memoryLeft, totalMemory, updatedAt })
+    Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, updatedAt })
         .then((data) => {
             if (data) {
                 return res.send({ message: `Source '${name}' created succesfully!` })
@@ -69,7 +69,7 @@ module.exports.getAllSources = (req, res) => {
             if (!data) {
                 throw new NotFoundError(`No sources was found.`);
             } else {
-                return res.send(data);
+                res.send(data);
             }
         })
         .catch((err) => {
@@ -83,11 +83,11 @@ module.exports.getAllSources = (req, res) => {
 // ?    req.body = { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
 module.exports.updateSource = (req, res) => {
     const { name } = req.params;
-    const { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory } = req.body;
+    const { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory } = req.body;
     const updatedAt = new Date();
 
     const filter = { name };
-    const update = { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory, updatedAt };
+    const update = { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory, updatedAt };
 
     Source.findOneAndUpdate(filter, update)
         .then((data) => {

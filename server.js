@@ -5,7 +5,6 @@ const cors = require("cors");
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 
-
 // get Port, file path, folderName and mongoURI
 const { PORT = 4000,
     mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority" } = process.env;
@@ -31,7 +30,7 @@ app.use(require('./routes/sources'));
 app.use(require('./routes/companies'));
 
 app.get('/', (req, res) => {
-
+    
 });
 
 app.use(errorLogger);   // enabling the error logger

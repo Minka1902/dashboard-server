@@ -77,6 +77,23 @@ module.exports.getAllSources = (req, res) => {
         })
 };
 
+//      checks if source is ok
+// TODO GET /check-source
+// ?    req.body = { url }
+module.exports.checkSource = (req, res) => {
+    const { url } = req.params;
+    fetch(`http://${url}`)
+        .then((response) => {
+            const date = new Date();
+            if (response.ok) {
+                res.send({ lastChecked: date, url, status: response.status, isActive: response.ok })
+            }
+        })
+        .catch((err) => {
+            handleError(err, req, res);
+        });
+}
+
 //      Updates a source by name 
 // TODO PUT /update/:name
 // ?    req.params = { name }

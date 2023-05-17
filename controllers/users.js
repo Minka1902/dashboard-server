@@ -55,7 +55,7 @@ module.exports.login = (req, res, next) => {
               // the hashes didn't match, rejecting the promise
               return Promise.reject(new Error('Incorrect password or email'));
             }
-
+            
             let data = {
               time: Date(),
               userId: user._id,

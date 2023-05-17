@@ -22,8 +22,8 @@ const checkError = (err, req, res) => {
   }
 };
 
-const handleError = (err, req, res, next) => {
-  checkError(err, req, res, next);
+const handleError = (err, req, res) => {
+  checkError(err, req, res);
 };
 
 module.exports = { handleError, ErrorHandler };

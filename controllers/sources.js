@@ -1,5 +1,5 @@
 const Source = require('../models/source');
-const handleError = require('../errors/ErrorHandler');
+const { handleError } = require('../errors/ErrorHandler');
 const NotFoundError = require('../errors/NotFoundError');
 
 //      Creates the source
@@ -90,7 +90,10 @@ module.exports.checkSource = (req, res) => {
             }
         })
         .catch((err) => {
-            handleError(err, req, res);
+            if (err.message === "fetch failed") {
+                const date = new Date();
+                res.send({ status: 404, isActive: false, lastChecked: date })
+            }
         });
 }
 

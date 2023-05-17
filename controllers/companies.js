@@ -1,5 +1,5 @@
 const Company = require('../models/company');
-const handleError = require('../errors/ErrorHandler');
+const { handleError } = require('../errors/ErrorHandler');
 const NotFoundError = require('../errors/NotFoundError');
 
 //      Creates the source

@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
+const path = require('path');
 const cors = require("cors");
 const { errors } = require('celebrate');
 const { requestLogger, errorLogger } = require('./middleware/logger');
 
 // get Port, file path, folderName and mongoURI
-const { PORT = 4000,
+const { PORT = 4001,
+    folderName = 'dashboard',
     mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority" } = process.env;
 const app = express();
 
@@ -29,8 +31,9 @@ app.use(require('./routes/users'));
 app.use(require('./routes/sources'));
 app.use(require('./routes/companies'));
 
+app.use(express.static(`../${folderName}/build`));
 app.get('/', (req, res) => {
-    
+    res.sendFile(path.join(__dirname, '..') + `/${folderName}/build/index.html`);
 });
 
 app.use(errorLogger);   // enabling the error logger

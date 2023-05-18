@@ -114,7 +114,7 @@ module.exports.updateSource = (req, res) => {
             if (!data) {
                 throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
             } else {
-                return res.send(data);
+                return res.send({ message: 'Succesfully updated.' });
             }
         })
         .catch((err) => {

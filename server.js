@@ -9,8 +9,11 @@ const { requestLogger, errorLogger } = require('./middleware/logger');
 // get Port, file path, folderName and mongoURI
 const { PORT = 4001,
     folderName = 'dashboard',
+    url = `http://localhost:${PORT}`,
     mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority" } = process.env;
 const app = express();
+const handleResponse = (res) => (res.ok ? res.json() : Promise.reject(`Error: ${res.status}`))
+let sourceArray = [];
 
 mongoose.connect(mongoURI)
     .catch((err) => {
@@ -35,6 +38,66 @@ app.use(express.static(`../${folderName}/build`));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..') + `/${folderName}/build/index.html`);
 });
+
+const fetchAll = () =>
+    fetch(`${url}/get/all`)
+        .then(handleResponse)
+        .then((data) => {
+            if (data) {
+                data.map((source, index) => {
+                    sourceArray[index] = source;
+                })
+            }
+        })
+        .catch((err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+
+// ! updates the urlArray
+setImmediate(() => {
+    fetchAll();
+});
+
+// ! once a minute the server will check and update the url of all the sources
+setInterval(() => {
+    fetchAll();
+}, (60 * 1000));
+
+// ! every 5 seconds the server will check all the sources
+setInterval(() => {
+    sourceArray.map((source) => {
+        fetch(`${url}/check-source/${source.url}`)
+            .then(handleResponse)
+            .then((data) => {
+                if (data) {
+                    let newData = { lastActive: data.isActive ? new Date() : source.lastActive };
+                    newData.isActive = data ? data.isActive : false;
+                    newData.status = data.status;
+                    newData.lastChecked = new Date();
+                    fetch(`${url}/update/${source.name}`, {
+                        body: JSON.stringify(newData),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                        },
+                        method: 'PUT'
+                    }).then(handleResponse)
+                        .catch((err) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                        });
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+    })
+}, (10 * 1000));
 
 app.use(errorLogger);   // enabling the error logger
 app.use(errors());      // celebrate error handler

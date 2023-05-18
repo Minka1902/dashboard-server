@@ -1,14 +1,8 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getAllSources, getSource, createSource, deleteSource, updateSource, checkSource } = require('../controllers/sources');
+const { getAllSources, getSource, createSource, deleteSource, updateSource } = require('../controllers/sources');
 
 router.get('/get/all', getAllSources);
-
-router.get('/check-source/:url', celebrate({
-    params: Joi.object().keys({
-        url: Joi.string().required(),
-    }),
-}), checkSource)
 
 router.get('/get/:name', celebrate({
     params: Joi.object().keys({

@@ -27,6 +27,10 @@ const sourceSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    isMemory: {
+        type: Boolean,
+        required: true,
+    },
     memoryLeft: {
         type: Number,
     },

@@ -6,10 +6,10 @@ const NotFoundError = require('../errors/NotFoundError');
 // TODO POST /add-source
 // ?    req.body = { name, lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
 module.exports.createSource = (req, res) => {
-    const { name, lastActive, isActive, url, status, lastChecked, memoryLeft, totalMemory } = req.body;
+    const { name, lastActive, isActive, url, status, lastChecked, memoryLeft, totalMemory, isMemory } = req.body;
     const updatedAt = new Date();
 
-    Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, updatedAt })
+    Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, isMemory, updatedAt })
         .then((data) => {
             if (data) {
                 return res.send({ message: `Source '${name}' created succesfully!` })

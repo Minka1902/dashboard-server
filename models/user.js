@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Company = require('./company');
 const isEmail = require('validator/lib/isEmail');
 
 const userSchema = new mongoose.Schema({

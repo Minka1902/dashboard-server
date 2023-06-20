@@ -128,7 +128,7 @@ app.use(requestLogger);     // enabling the request logger
 
 app.use(require('./routes/users'));
 app.use(require('./routes/sources'));
-app.use(require('./routes/companies'));
+app.use(require('./routes/sourceUpdates'));
 
 app.use(express.static(`../${folderName}/build`));
 app.get('/', (req, res) => {

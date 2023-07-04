@@ -13,6 +13,7 @@ router.get('/get/:name', celebrate({
 router.post('/add-source', celebrate({
     body: Joi.object().keys({
         name: Joi.string().required().min(2).max(30),
+        ip: Joi.string(),
         url: Joi.string().required(),
         lastActive: Joi.date().required(),
         isActive: Joi.boolean().required(),
@@ -30,7 +31,29 @@ router.delete('/remove-source/:name', celebrate({
     })
 }), deleteSource);
 
+router.delete('/remove-source/:ip', celebrate({
+    params: Joi.object().keys({
+        ip: Joi.string().required(),
+    })
+}), deleteSource);
+
 router.put('/update/:name', celebrate({
+    body: Joi.object().keys({
+        lastActive: Joi.date(),
+        isActive: Joi.boolean(),
+        url: Joi.string(),
+        status: Joi.number(),
+        lastChecked: Joi.date(),
+        memoryLeft: Joi.number(),
+        totalMemory: Joi.number(),
+        updatedAt: Joi.date().required(),
+    }),
+    params: Joi.object().keys({
+        name: Joi.string().required().min(2).max(30),
+    })
+}), updateSource);
+
+router.put('/update/:ip', celebrate({
     body: Joi.object().keys({
         lastActive: Joi.date(),
         isActive: Joi.boolean(),
@@ -41,7 +64,7 @@ router.put('/update/:name', celebrate({
         totalMemory: Joi.number(),
     }),
     params: Joi.object().keys({
-        name: Joi.string().required().min(2).max(30),
+        ip: Joi.string().required(),
     })
 }), updateSource);
 

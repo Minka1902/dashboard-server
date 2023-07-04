@@ -6,6 +6,10 @@ const sourceSchema = new mongoose.Schema({
         unique: true,
         required: true,
     },
+    ip: {
+        type: String,
+        unique: true,
+    },
     url: {
         type: String,
         required: true,

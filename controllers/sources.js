@@ -6,10 +6,10 @@ const NotFoundError = require('../errors/NotFoundError');
 // TODO POST /add-source
 // ?    req.body = { name, lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
 module.exports.createSource = (req, res) => {
-    const { name, lastActive, isActive, url, status, lastChecked, memoryLeft, totalMemory, isMemory } = req.body;
+    const { name, lastActive, isActive, url, status, lastChecked, memoryLeft, totalMemory, isMemory, ip } = req.body;
     const updatedAt = new Date();
 
-    Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, isMemory, updatedAt })
+    Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, isMemory, updatedAt, ip })
         .then((data) => {
             if (data) {
                 return res.send({ message: `Source '${name}' created succesfully!` })
@@ -41,14 +41,31 @@ module.exports.getSource = (req, res, next) => {
 
 //      Deletes source
 // TODO DELETE /remove-source/:name
-// ?    req.params = { name }
+// ?    req.params = { name || ip }
 module.exports.deleteSource = (req, res) => {
     const { name } = req.params;
+    let filter;
+    if (name) {
+        filter = { name };
+    }
 
-    Source.findOneAndDelete({ name })
+    Source.findOneAndDelete(filter)
         .then((source) => {
             if (!source) {
-                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+                filter = { ip: name };
+                Source.findOneAndDelete(filter)
+                    .then((source) => {
+                        if (!source) {
+                            throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+                        } else {
+                            return res.send(source);
+                        }
+                    })
+                    .catch((err) => {
+                        if (err.name === 'ValidationError') {
+                            return res.status(400).send(err);
+                        }
+                    });
             } else {
                 return res.send(source);
             }
@@ -79,20 +96,33 @@ module.exports.getAllSources = (req, res) => {
 
 //      Updates a source by name 
 // TODO PUT /update/:name
-// ?    req.params = { name }
+// ?    req.params = { name || ip }
 // ?    req.body = { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
 module.exports.updateSource = (req, res) => {
     const { name } = req.params;
     const { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory } = req.body;
     const updatedAt = new Date();
 
-    const filter = { name };
+    let filter;
+    if (name) {
+        filter = { name };
+    }
     const update = { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory, updatedAt };
 
     Source.findOneAndUpdate(filter, update)
         .then((data) => {
             if (!data) {
-                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+                Source.findOneAndUpdate({ url: `${name}` }, update)
+                    .then((data) => {
+                        if (!data) {
+                            throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+                        } else {
+                            return res.send({ message: 'Succesfully updated.' });
+                        }
+                    })
+                    .catch((err) => {
+                        handleError(err, req, res);
+                    })
             } else {
                 return res.send({ message: 'Succesfully updated.' });
             }

@@ -47,7 +47,7 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('password')
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('No user with matching ID found');
+        throw new NotFoundError('No user with matching ID found.');
       } else {
         bcrypt.compare(password, user.password)
           .then((matched) => {

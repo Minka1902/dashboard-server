@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const sourceUpdateSchema = new mongoose.Schema({
+    ip: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     memoryLeft: {
         type: Number,
     },

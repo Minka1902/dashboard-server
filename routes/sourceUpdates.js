@@ -6,6 +6,7 @@ router.get('/get-all', getAllUpdates);
 
 router.post('/update', celebrate({
     body: Joi.object().keys({
+        ip: Joi.string().required(),
         updatedAt: Joi.date().required(),
         totalMemory: Joi.number().required(),
         memoryLeft: Joi.number().required(),

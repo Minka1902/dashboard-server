@@ -21,7 +21,6 @@ router.post('/add-source', celebrate({
         lastChecked: Joi.date().required(),
         memoryLeft: Joi.number(),
         totalMemory: Joi.number(),
-        isMemory: Joi.boolean().required(),
     }),
 }), createSource);
 
@@ -37,10 +36,10 @@ router.put('/update/:name', celebrate({
         isActive: Joi.boolean(),
         url: Joi.string(),
         status: Joi.number(),
-        lastChecked: Joi.date(),
+        lastChecked: Joi.date().required(),
         memoryLeft: Joi.number(),
         totalMemory: Joi.number(),
-        updatedAt: Joi.date().required(),
+        updatedAt: Joi.date(),
     }),
     params: Joi.object().keys({
         name: Joi.string().required().min(2).max(30),

@@ -102,12 +102,14 @@ module.exports.updateSource = (req, res) => {
     const { name } = req.params;
     const { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory } = req.body;
     const updatedAt = new Date();
-    let tempIsActive;
+    let tempIsActive, tempStatus;
     if (!isActive) {
         if (updatedAt.getTime() - lastChecked.getTime() < 3000000) {
             tempIsActive = true;
+            tempStatus = 200;
         } else {
             tempIsActive = false;
+            tempStatus = status;
         }
     }
 
@@ -115,7 +117,7 @@ module.exports.updateSource = (req, res) => {
     if (name) {
         filter = { name };
     }
-    const update = { lastActive, isActive: tempIsActive, status, lastChecked, url, memoryLeft, totalMemory, updatedAt };
+    const update = { lastActive, isActive: tempIsActive, status: tempStatus, lastChecked, url, memoryLeft, totalMemory, updatedAt };
 
     Source.findOneAndUpdate(filter, update)
         .then((data) => {

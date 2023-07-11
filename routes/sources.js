@@ -1,12 +1,12 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getAllSources, getSource, createSource, deleteSource, updateSource } = require('../controllers/sources');
+const { getAllSources, getSource, createSource, deleteSource, updateSource, editSource } = require('../controllers/sources');
 
 router.get('/get/all', getAllSources);
 
-router.get('/get/:name', celebrate({
+router.get('/get/:id', celebrate({
     params: Joi.object().keys({
-        name: Joi.string().required().min(2).max(30),
+        id: Joi.string().required().min(24).max(24),
     }),
 }), getSource);
 
@@ -24,9 +24,9 @@ router.post('/add-source', celebrate({
     }),
 }), createSource);
 
-router.delete('/remove-source/:name', celebrate({
+router.delete('/remove-source/:id', celebrate({
     params: Joi.object().keys({
-        name: Joi.string().required().min(2).max(30),
+        id: Joi.string().required().min(24).max(24),
     })
 }), deleteSource);
 
@@ -45,5 +45,15 @@ router.put('/update/:name', celebrate({
         name: Joi.string().required().min(2).max(30),
     })
 }), updateSource);
+
+router.put('/edit/:id', celebrate({
+    body: Joi.object().keys({
+        name: Joi.string().min(2).max(30),
+        url: Joi.string(),
+    }),
+    params: Joi.object().keys({
+        id: Joi.string().required().min(24).max(24),
+    }),
+}), editSource);
 
 module.exports = router;

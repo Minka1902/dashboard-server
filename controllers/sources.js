@@ -24,11 +24,11 @@ module.exports.createSource = (req, res) => {
 
 //      Returns the source as is
 // TODO GET /get/:name
-// ?    req.params = { name }
+// ?    req.params = { id }
 module.exports.getSource = (req, res, next) => {
-    const { name } = req.params;
+    const { id } = req.params;
 
-    Source.findOne({ name })
+    Source.findById({ _id: id })
         .then((source) => {
             if (!source) {
                 throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
@@ -41,31 +41,18 @@ module.exports.getSource = (req, res, next) => {
 
 //      Deletes source
 // TODO DELETE /remove-source/:name
-// ?    req.params = { name || ip }
+// ?    req.params = { id }
 module.exports.deleteSource = (req, res) => {
-    const { name } = req.params;
+    const { id } = req.params;
     let filter;
-    if (name) {
-        filter = { name };
+    if (id) {
+        filter = { _id: id };
     }
 
-    Source.findOneAndDelete(filter)
+    Source.findByIdAndDelete(filter)
         .then((source) => {
             if (!source) {
-                filter = { ip: name };
-                Source.findOneAndDelete(filter)
-                    .then((source) => {
-                        if (!source) {
-                            throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
-                        } else {
-                            return res.send(source);
-                        }
-                    })
-                    .catch((err) => {
-                        if (err.name === 'ValidationError') {
-                            return res.status(400).send(err);
-                        }
-                    });
+                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
             } else {
                 return res.send(source);
             }
@@ -140,4 +127,28 @@ module.exports.updateSource = (req, res) => {
         .catch((err) => {
             handleError(err, req, res);
         })
-}
+};
+
+//      Edits the source name and url by name 
+// TODO PUT /edit/:currentName
+// ?    req.params = { currentName }
+// ?    req.body = { name, url }
+module.exports.editSource = (req, res) => {
+    const { id } = req.params;
+    const { name, url } = req.body;
+
+    const filter = { _id: id };
+    const update = { name, url };
+
+    Source.findOneAndUpdate(filter, update)
+        .then((data) => {
+            if (!data) {
+                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+            } else {
+                return res.send({ message: 'Successfully updated.' });
+            }
+        })
+        .catch((err) => {
+            handleError(err, req, res);
+        })
+};

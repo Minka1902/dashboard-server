@@ -12,7 +12,7 @@ module.exports.createSource = (req, res) => {
     Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, updatedAt, ip })
         .then((data) => {
             if (data) {
-                return res.send({ message: `Source '${name}' created succesfully!` })
+                return res.send({ message: `Source '${name}' created successfully!` })
             } else {
                 return res.send({ message: `Something went wrong, Please try again.` })
             }
@@ -102,12 +102,20 @@ module.exports.updateSource = (req, res) => {
     const { name } = req.params;
     const { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory } = req.body;
     const updatedAt = new Date();
+    let tempIsActive;
+    if (!isActive) {
+        if (updatedAt.getTime() - lastChecked.getTime() < 3000000) {
+            tempIsActive = true;
+        } else {
+            tempIsActive = false;
+        }
+    }
 
     let filter;
     if (name) {
         filter = { name };
     }
-    const update = { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory, updatedAt };
+    const update = { lastActive, isActive: tempIsActive, status, lastChecked, url, memoryLeft, totalMemory, updatedAt };
 
     Source.findOneAndUpdate(filter, update)
         .then((data) => {
@@ -117,14 +125,14 @@ module.exports.updateSource = (req, res) => {
                         if (!data) {
                             throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
                         } else {
-                            return res.send({ message: 'Succesfully updated.' });
+                            return res.send({ message: 'Successfully updated.' });
                         }
                     })
                     .catch((err) => {
                         handleError(err, req, res);
                     })
             } else {
-                return res.send({ message: 'Succesfully updated.' });
+                return res.send({ message: 'Successfully updated.' });
             }
         })
         .catch((err) => {

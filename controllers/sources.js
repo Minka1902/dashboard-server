@@ -12,7 +12,7 @@ module.exports.createSource = (req, res) => {
     Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, updatedAt, ip })
         .then((data) => {
             if (data) {
-                return res.send({ message: `Source '${name}' created successfully!` })
+                return res.send({ message: `Source '${name}' created successfully!`, name: data.name })
             } else {
                 return res.send({ message: `Something went wrong, Please try again.` })
             }

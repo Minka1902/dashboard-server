@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { addCollection, getEntries, addEntry } = require('../controllers/collections');
+const { addCollection, getEntries, addEntry, deleteCollection } = require('../controllers/collections');
 
 router.post('/create-collection', celebrate({
     body: Joi.object().keys({
@@ -22,5 +22,11 @@ router.get('/collection/:collectionName', celebrate({
         collectionName: Joi.string().required(),
     })
 }), getEntries);
+
+router.delete('/collections/remove/:collectionName', celebrate({
+    params: Joi.object().keys({
+        collectionName: Joi.string().required(),
+    })
+}), deleteCollection);
 
 module.exports = router;

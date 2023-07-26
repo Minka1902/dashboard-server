@@ -1,13 +1,13 @@
 const { handleError } = require('../errors/ErrorHandler');
 const NotFoundError = require('../errors/NotFoundError');
 const mongoose = require('mongoose');
+const mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority";
 
 //      Creates the collection
 // TODO POST /create-collection
 // ?    req.body = { name }
 module.exports.addCollection = async (req, res) => {
     const { MongoClient } = require('mongodb');
-    const mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority";
     const { name } = req.body;
 
     MongoClient.connect(mongoURI)
@@ -63,10 +63,13 @@ module.exports.getEntries = async (req, res) => {
         let counter = 0;
         const cursor = await collection.find({});
         if (cursor) {
+            let tempDoc;
             for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
                 if (doc) {
+                    const percent = doc.memoryLeft * 100;
+                    tempDoc = { checkedAt: doc.checkedAt, percent: (percent / doc.totalMemory), totalMemory: doc.totalMemory, memoryLeft: doc.memoryLeft };
                     counter++;
-                    dataArray.push(doc);
+                    dataArray.push(tempDoc);
                 }
             }
             if (counter !== 0) {
@@ -83,7 +86,6 @@ module.exports.getEntries = async (req, res) => {
 // ?    req.params = { collectionName }
 module.exports.deleteCollection = async (req, res) => {
     const { MongoClient } = require('mongodb');
-    const mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority";
     const { collectionName } = req.params;
 
     MongoClient.connect(mongoURI)

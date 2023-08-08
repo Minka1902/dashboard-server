@@ -33,21 +33,24 @@ module.exports.addCollection = async (req, res) => {
 //      Creates an entry
 // TODO POST /add-entry
 // ?    req.body = { memoryLeft, totalMemory, collectionName, checkedAt }
-module.exports.addEntry = (req, res) => {
+module.exports.addEntry = async (req, res) => {
     const { memoryLeft, totalMemory, collectionName, checkedAt } = req.body;
     const collection = mongoose.connection.collection(collectionName);
+    const lastEntry = await getLastEntry(collectionName);
 
-    collection.insertOne({ memoryLeft, totalMemory, checkedAt })
-        .then((data) => {
-            if (data) {
-                return res.send({ message: `Entry created successfully!` })
-            } else {
-                return res.send({ message: `Something went wrong, Please try again.` })
-            }
-        })
-        .catch((err) => {
-            handleError(err, req, res);
-        })
+    if (lastEntry.memoryLeft !== memoryLeft)
+        collection.insertOne({ memoryLeft, totalMemory, checkedAt })
+            .then((data) => {
+                if (data) {
+                    return res.send({ message: `Entry created successfully!` })
+                } else {
+                    return res.send({ message: `Something went wrong, Please try again.` })
+                }
+            })
+            .catch((err) => {
+                handleError(err, req, res);
+            })
+    else res.send({ message: `Memory remained the same.` });
 };
 
 //      Returns all entries by collection name
@@ -78,6 +81,23 @@ module.exports.getEntries = async (req, res) => {
                 res.send(new NotFoundError(`No sources was found.`));
             }
         }
+    }
+};
+
+//      Returns the last entry of a collection by name
+// ?    gets collectionName
+const getLastEntry = async (collectionName) => {
+    if (collectionName) {
+        const collection = mongoose.connection.collection(collectionName);
+        const cursor = await collection.find().sort({ _id: -1 }).limit(1);
+        let dataArray = [];
+        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
+            if (doc) {
+                dataArray.push(doc);
+            }
+        }
+        if (dataArray.length > 0) return dataArray[0];
+        else return null;
     }
 };
 

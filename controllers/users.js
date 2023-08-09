@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
 const { JWT_SECRET = 'dev-secret' } = process.env;
 
 // ////////////////////////////////////////////////////////////////
@@ -47,23 +48,24 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('password')
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('No user with matching ID found.');
+        return new NotFoundError('No user with matching Email found.');
       } else {
         bcrypt.compare(password, user.password)
           .then((matched) => {
             if (!matched) {
               // the hashes didn't match, rejecting the promise
-              return Promise.reject(new Error('Incorrect password or email'));
+              return new ValidationError('Incorrect password or email');
             }
-            
+
             let data = {
               time: Date(),
               userId: user._id,
             }
             const token = jwt.sign(data, JWT_SECRET);
+            
             // successful authentication
             return res.send({ user: user, jwt: token });
-          })
+          });
       }
     })
     .catch(next);

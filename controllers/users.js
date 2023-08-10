@@ -48,13 +48,14 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('password')
     .then((user) => {
       if (!user) {
-        return new NotFoundError('No user with matching Email found.');
+        return new NotFoundError('No user with matching Email found');
       } else {
         bcrypt.compare(password, user.password)
           .then((matched) => {
             if (!matched) {
               // the hashes didn't match, rejecting the promise
-              return new ValidationError('Incorrect password or email');
+              res.send(new ValidationError('Incorrect password or email'));
+              return;
             }
 
             let data = {
@@ -62,7 +63,7 @@ module.exports.login = (req, res, next) => {
               userId: user._id,
             }
             const token = jwt.sign(data, JWT_SECRET);
-            
+
             // successful authentication
             return res.send({ user: user, jwt: token });
           });

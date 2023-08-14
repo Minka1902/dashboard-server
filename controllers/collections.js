@@ -38,10 +38,10 @@ module.exports.addEntry = async (req, res) => {
     const collection = mongoose.connection.collection(collectionName);
     const lastEntry = await getLastEntry(collectionName);
 
-    if (lastEntry.memoryLeft !== memoryLeft)
+    if (lastEntry === null || lastEntry.memoryLeft !== memoryLeft)
         collection.insertOne({ memoryLeft, totalMemory, checkedAt })
             .then((data) => {
-                if (data) {
+                if (data.acknowledged) {
                     return res.send({ message: `Entry created successfully!` })
                 } else {
                     return res.send({ message: `Something went wrong, Please try again.` })

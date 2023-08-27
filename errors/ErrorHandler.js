@@ -18,7 +18,7 @@ const checkError = (err, req, res) => {
   } if (err.name == 'PayloadTooLargeError') {
     return res.status(413).send({ message: 'Content to long.' })
   } else {
-    return res.status(500).send({ message: 'An error has occurred on the server.' });
+    return res.send({ message: 'An error has occurred on the server.' });
   }
 };
 

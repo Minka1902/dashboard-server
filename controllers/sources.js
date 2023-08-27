@@ -52,7 +52,7 @@ module.exports.deleteSource = (req, res) => {
     Source.findByIdAndDelete(filter)
         .then((source) => {
             if (!source) {
-                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+                throw new NotFoundError(`No source with this - '${source.name}' name, was found nor updated.`);
             } else {
                 return res.send(source);
             }
@@ -110,8 +110,8 @@ module.exports.updateSource = (req, res) => {
         .then((data) => {
             if (!data) {
                 Source.findOneAndUpdate({ url: `${name}` }, update)
-                    .then((data) => {
-                        if (!data) {
+                    .then((data2) => {
+                        if (!data2) {
                             throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
                         } else {
                             return res.send({ message: 'Successfully updated.' });

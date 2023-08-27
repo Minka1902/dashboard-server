@@ -32,14 +32,14 @@ module.exports.addCollection = async (req, res) => {
 
 //      Creates an entry
 // TODO POST /add-entry
-// ?    req.body = { memoryLeft, totalMemory, collectionName, checkedAt }
+// ?    req.body = { memoryLeft, totalMemory, collectionName, checkedAt, isActive, status }
 module.exports.addEntry = async (req, res) => {
-    const { memoryLeft, totalMemory, collectionName, checkedAt } = req.body;
+    const { memoryLeft, totalMemory, collectionName, checkedAt, isActive, status } = req.body;
     const collection = mongoose.connection.collection(collectionName);
     const lastEntry = await getLastEntry(collectionName);
 
     if (lastEntry === null || lastEntry.memoryLeft !== memoryLeft)
-        collection.insertOne({ memoryLeft, totalMemory, checkedAt })
+        collection.insertOne({ memoryLeft, totalMemory, checkedAt, isActive, status })
             .then((data) => {
                 if (data.acknowledged) {
                     return res.send({ message: `Entry created successfully!` })
@@ -70,7 +70,11 @@ module.exports.getEntries = async (req, res) => {
             for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
                 if (doc) {
                     const percent = doc.memoryLeft * 100;
-                    tempDoc = { checkedAt: doc.checkedAt, percent: (percent / doc.totalMemory), totalMemory: doc.totalMemory, memoryLeft: doc.memoryLeft };
+                    if (doc.memoryLeft !== null) {
+                        tempDoc = { checkedAt: doc.checkedAt, percent: (percent / doc.totalMemory), totalMemory: doc.totalMemory, memoryLeft: doc.memoryLeft };
+                    } else {
+                        tempDoc = { checkedAt: doc.checkedAt, status: doc.status, isActive: doc.isActive };
+                    }
                     counter++;
                     dataArray.push(tempDoc);
                 }
@@ -89,7 +93,7 @@ module.exports.getEntries = async (req, res) => {
 const getLastEntry = async (collectionName) => {
     if (collectionName) {
         const collection = mongoose.connection.collection(collectionName);
-        const cursor = await collection.find().sort({ _id: -1 }).limit(1);
+        const cursor = await collection.find({}, { sort: { _id: -1 } }).limit(1);
         let dataArray = [];
         for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
             if (doc) {

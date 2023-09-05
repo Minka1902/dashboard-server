@@ -17,8 +17,10 @@ const checkError = (err, req, res) => {
     return res.status(422).send({ message: 'Validation error.' });
   } if (err.name == 'PayloadTooLargeError') {
     return res.status(413).send({ message: 'Content to long.' })
+  } if (err.message.includes("No source with this - '") && err.message.includes("' name, was found nor updated.")) {
+    return;
   } else {
-    return res.send({ message: 'An error has occurred on the server.' });
+    return res.send({ message: 'An error has occurred on the server.', error: err });
   }
 };
 

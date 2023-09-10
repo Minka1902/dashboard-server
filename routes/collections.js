@@ -10,8 +10,10 @@ router.post('/create-collection', celebrate({
 
 router.post('/add-entry', celebrate({
     body: Joi.object().keys({
+        totalCapacity: Joi.number(),
+        capacityLeft: Joi.number(),
         totalMemory: Joi.number(),
-        memoryLeft: Joi.number(),
+        freeMemory: Joi.number(),
         checkedAt: Joi.date().required(),
         collectionName: Joi.string().required(),
         status: Joi.number(),

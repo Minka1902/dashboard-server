@@ -4,12 +4,12 @@ const NotFoundError = require('../errors/NotFoundError');
 
 //      Creates the source
 // TODO POST /add-source
-// ?    req.body = { name, lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
+// ?    req.body = { name, lastActive, isActive, status, lastChecked, capacityLeft, totalCapacity, freeMemory, totalMemory }
 module.exports.createSource = (req, res) => {
-    const { name, lastActive, isActive, url, status, lastChecked, memoryLeft, totalMemory, ip } = req.body;
+    const { name, lastActive, isActive, url, status, lastChecked, capacityLeft, totalCapacity, ip, freeMemory, totalMemory } = req.body;
     const updatedAt = new Date();
 
-    Source.create({ name, lastActive, lastChecked, status, isActive, url, memoryLeft, totalMemory, updatedAt, ip })
+    Source.create({ name, lastActive, lastChecked, status, isActive, url, capacityLeft, totalCapacity, updatedAt, ip, freeMemory, totalMemory })
         .then((data) => {
             if (data) {
                 return res.send({ message: `Source '${name}' created successfully!`, name: data.name })
@@ -84,10 +84,10 @@ module.exports.getAllSources = (req, res) => {
 //      Updates a source by name 
 // TODO PUT /update/:name
 // ?    req.params = { name || ip }
-// ?    req.body = { lastActive, isActive, status, lastChecked, memoryLeft, totalMemory }
+// ?    req.body = { lastActive, isActive, status, lastChecked, capacityLeft, totalCapacity, freeMemory, totalMemory }
 module.exports.updateSource = (req, res) => {
     const { name } = req.params;
-    const { lastActive, isActive, status, lastChecked, url, memoryLeft, totalMemory } = req.body;
+    const { lastActive, isActive, status, lastChecked, url, capacityLeft, totalCapacity, freeMemory, totalMemory } = req.body;
     const updatedAt = new Date();
     let tempIsActive, tempStatus;
     if (!isActive) {
@@ -104,7 +104,7 @@ module.exports.updateSource = (req, res) => {
     if (name) {
         filter = { name };
     }
-    const update = { lastActive, isActive: tempIsActive, status: tempStatus, lastChecked, url, memoryLeft, totalMemory, updatedAt };
+    const update = { lastActive, isActive: tempIsActive, status: tempStatus, lastChecked, url, capacityLeft, totalCapacity, updatedAt, freeMemory, totalMemory };
 
     Source.findOneAndUpdate(filter, update)
         .then((data) => {

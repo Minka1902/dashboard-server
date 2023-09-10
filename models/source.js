@@ -29,12 +29,18 @@ const sourceSchema = new mongoose.Schema({
     },
     lastChecked: {
         type: Date,
-        required: true
+        required: true,
     },
-    memoryLeft: {
+    totalCapacity: {
+        type: Number,
+    },
+    capacityLeft: {
         type: Number,
     },
     totalMemory: {
+        type: Number,
+    },
+    freeMemory: {
         type: Number,
     },
     updatedAt: {

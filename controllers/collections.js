@@ -32,14 +32,14 @@ module.exports.addCollection = async (req, res) => {
 
 //      Creates an entry
 // TODO POST /add-entry
-// ?    req.body = { memoryLeft, totalMemory, collectionName, checkedAt, isActive, status }
+// ?    req.body = { capacityLeft, totalCapacity, collectionName, checkedAt, isActive, status, totalMemory, freeMemory }
 module.exports.addEntry = async (req, res) => {
-    const { memoryLeft, totalMemory, collectionName, checkedAt, isActive, status } = req.body;
+    const { capacityLeft, totalCapacity, collectionName, checkedAt, isActive, status, totalMemory, freeMemory } = req.body;
     const collection = mongoose.connection.collection(collectionName);
     const lastEntry = await getLastEntry(collectionName);
 
-    if (lastEntry === null || lastEntry.memoryLeft !== memoryLeft)
-        collection.insertOne({ memoryLeft, totalMemory, checkedAt, isActive, status })
+    if (lastEntry === null || lastEntry.capacityLeft !== capacityLeft)
+        collection.insertOne({ capacityLeft, totalCapacity, checkedAt, isActive, status, totalMemory, freeMemory })
             .then((data) => {
                 if (data.acknowledged) {
                     return res.send({ message: `Entry created successfully!` })
@@ -58,7 +58,7 @@ module.exports.addEntry = async (req, res) => {
 // ?    req.params = { collectionName }
 module.exports.getEntries = async (req, res) => {
     const { collectionName } = req.params;
-    if (collectionName === 'users') {
+    if (collectionName === 'users' || collectionName === 'sources') {
         res.status(404).send({ message: "NOT ALLOWED!!!", status: 404, reason: "Can't access this collection." });
     } else {
         const collection = mongoose.connection.collection(collectionName);
@@ -69,9 +69,10 @@ module.exports.getEntries = async (req, res) => {
             let tempDoc;
             for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
                 if (doc) {
-                    const percent = doc.memoryLeft * 100;
-                    if (doc.memoryLeft !== null) {
-                        tempDoc = { checkedAt: doc.checkedAt, percent: (percent / doc.totalMemory), totalMemory: doc.totalMemory, memoryLeft: doc.memoryLeft };
+                    const capacityPercent = doc.capacityLeft * 100;
+                    const memoryPercent = doc.freeMemory * 100;
+                    if (doc.capacityLeft !== null) {
+                        tempDoc = { checkedAt: doc.checkedAt, capacityPercent: (capacityPercent / doc.totalCapacity), memoryPercent: (memoryPercent / doc.totalMemory), totalCapacity: doc.totalCapacity, capacityLeft: doc.capacityLeft, totalMemory: doc.totalMemory, freeMemory: doc.freeMemory };
                     } else {
                         tempDoc = { checkedAt: doc.checkedAt, status: doc.status, isActive: doc.isActive };
                     }

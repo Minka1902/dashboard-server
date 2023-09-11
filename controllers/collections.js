@@ -36,21 +36,18 @@ module.exports.addCollection = async (req, res) => {
 module.exports.addEntry = async (req, res) => {
     const { capacityLeft, totalCapacity, collectionName, checkedAt, isActive, status, totalMemory, freeMemory } = req.body;
     const collection = mongoose.connection.collection(collectionName);
-    const lastEntry = await getLastEntry(collectionName);
 
-    if (lastEntry === null || lastEntry.capacityLeft !== capacityLeft)
-        collection.insertOne({ capacityLeft, totalCapacity, checkedAt, isActive, status, totalMemory, freeMemory })
-            .then((data) => {
-                if (data.acknowledged) {
-                    return res.send({ message: `Entry created successfully!` })
-                } else {
-                    return res.send({ message: `Something went wrong, Please try again.` })
-                }
-            })
-            .catch((err) => {
-                handleError(err, req, res);
-            })
-    else res.send({ message: `Memory remained the same.` });
+    collection.insertOne({ capacityLeft, totalCapacity, checkedAt, isActive, status, totalMemory, freeMemory })
+        .then((data) => {
+            if (data.acknowledged) {
+                return res.send({ message: `Entry created successfully!` })
+            } else {
+                return res.send({ message: `Something went wrong, Please try again.` })
+            }
+        })
+        .catch((err) => {
+            handleError(err, req, res);
+        });
 };
 
 //      Returns all entries by collection name

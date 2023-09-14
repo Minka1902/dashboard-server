@@ -78,7 +78,7 @@ module.exports.getEntries = async (req, res) => {
                 }
             }
             if (counter !== 0) {
-                res.send({ found: counter, data: dataArray });
+                res.send({ found: counter, lastEntry: await getLastEntry(collectionName), data: dataArray });
             } else {
                 res.send(new NotFoundError(`No sources was found.`));
             }
@@ -86,20 +86,19 @@ module.exports.getEntries = async (req, res) => {
     }
 };
 
-//      Returns the last entry of a collection by name
-// ?    gets collectionName
 const getLastEntry = async (collectionName) => {
     if (collectionName) {
         const collection = mongoose.connection.collection(collectionName);
-        const cursor = await collection.find({}, { sort: { _id: -1 } }).limit(1);
-        let dataArray = [];
-        for (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {
-            if (doc) {
-                dataArray.push(doc);
+        const lastEntry = await collection.findOne({}, { sort: { _id: -1 } });
+        if (lastEntry) {
+            let temp = {};
+            for (let prop in lastEntry) {
+                if (lastEntry[prop] !== null) {
+                    temp[prop] = lastEntry[prop];
+                }
             }
-        }
-        if (dataArray.length > 0) return dataArray[0];
-        else return null;
+            return temp;
+        } else return null;
     }
 };
 

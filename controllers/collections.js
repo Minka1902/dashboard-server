@@ -93,7 +93,7 @@ const getLastEntry = async (collectionName) => {
         if (lastEntry) {
             let temp = {};
             for (let prop in lastEntry) {
-                if (lastEntry[prop] !== null) {
+                if (lastEntry[prop] !== null && prop !== '_id') {
                     temp[prop] = lastEntry[prop];
                 }
             }

@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+const mongoURI = "mongodb+srv://minkascharff:k8oq9asWBe7XCulO@cluster0.8bxrnyh.mongodb.net/dashboarDB?retryWrites=true&w=majority";
 const Source = require('../models/source');
 const { handleError } = require('../errors/ErrorHandler');
 const NotFoundError = require('../errors/NotFoundError');
@@ -23,17 +25,17 @@ module.exports.createSource = (req, res) => {
 };
 
 //      Returns the source as is
-// TODO GET /get/:name
+// TODO GET /get/:id
 // ?    req.params = { id }
 module.exports.getSource = (req, res, next) => {
     const { id } = req.params;
 
     Source.findById({ _id: id })
-        .then((source) => {
+        .then(async (source) => {
             if (!source) {
-                throw new NotFoundError(`No source with this - '${name}' name, was found nor updated.`);
+                throw new NotFoundError(`No source with this - ${id} ID, was found nor updated.`);
             } else {
-                return res.send(source);
+                return res.send({ source, lastEntry: await getLastEntry(source.url) });
             }
         })
         .catch(next);
@@ -69,11 +71,16 @@ module.exports.deleteSource = (req, res) => {
 // ?    req.params = { name }
 module.exports.getAllSources = (req, res) => {
     Source.find({})
-        .then((data) => {
+        .then(async (data) => {
             if (!data) {
                 throw new NotFoundError(`No sources was found.`);
             } else {
-                res.send(data);
+                let newData = [];
+                for (let i = 0; i < data.length; i++) {
+                    newData[i] = { data: data[i], lastEntry: await getLastEntry(data[i].url) }
+                }
+
+                res.send(newData);
             }
         })
         .catch((err) => {
@@ -141,4 +148,20 @@ module.exports.editSource = (req, res) => {
         .catch((err) => {
             handleError(err, req, res);
         })
+};
+
+const getLastEntry = async (collectionName) => {
+    if (collectionName) {
+        const collection = mongoose.connection.collection(collectionName);
+        const lastEntry = await collection.findOne({}, { sort: { _id: -1 } });
+        if (lastEntry) {
+            let temp = {};
+            for (let prop in lastEntry) {
+                if (lastEntry[prop] !== null && prop !== '_id') {
+                    temp[prop] = lastEntry[prop];
+                }
+            }
+            return temp;
+        } else return null;
+    }
 };

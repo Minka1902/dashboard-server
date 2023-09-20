@@ -15,6 +15,11 @@ const sourceSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    isMachine: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
     lastActive: {
         type: Date,
         required: true,

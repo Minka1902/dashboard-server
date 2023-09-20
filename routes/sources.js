@@ -17,6 +17,7 @@ router.post('/add-source', celebrate({
         url: Joi.string().required(),
         lastActive: Joi.date().required(),
         isActive: Joi.boolean().required(),
+        isMachine: Joi.boolean().default(false),
         status: Joi.number().required(),
         lastChecked: Joi.date().required(),
         totalMemory: Joi.number(),

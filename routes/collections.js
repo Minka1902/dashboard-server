@@ -17,6 +17,7 @@ router.post('/add-entry', celebrate({
         checkedAt: Joi.date().required(),
         collectionName: Joi.string().required(),
         status: Joi.number(),
+        error: Joi.object(),
         isActive: Joi.boolean(),
     })
 }), addEntry);

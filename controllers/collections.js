@@ -34,10 +34,10 @@ module.exports.addCollection = async (req, res) => {
 // TODO POST /add-entry
 // ?    req.body = { capacityLeft, totalCapacity, collectionName, checkedAt, isActive, status, totalMemory, freeMemory }
 module.exports.addEntry = async (req, res) => {
-    const { capacityLeft, totalCapacity, collectionName, checkedAt, isActive, status, totalMemory, freeMemory } = req.body;
+    const { capacityLeft, totalCapacity, collectionName, checkedAt, isActive, status, totalMemory, freeMemory, error } = req.body;
     const collection = mongoose.connection.collection(collectionName);
 
-    collection.insertOne({ capacityLeft, totalCapacity, checkedAt, isActive, status, totalMemory, freeMemory })
+    collection.insertOne({ capacityLeft, totalCapacity, checkedAt, isActive, status, totalMemory, freeMemory, error })
         .then((data) => {
             if (data.acknowledged) {
                 return res.send({ message: `Entry created successfully!` })
